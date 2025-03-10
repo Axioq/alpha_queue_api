@@ -3,4 +3,4 @@ import os
 
 load_dotenv()
 
-TMBD_API_KEY = os.getenv("TMBD_API_KEY")
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
