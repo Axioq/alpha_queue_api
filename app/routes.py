@@ -1,8 +1,34 @@
+import os
 from flask import Blueprint, jsonify, request
+from dotenv import load_dotenv
 from .tmdb import search_tv_shows
 from .watch_history import add_episode_progress, get_progress_for_show, delete_progress_for_show, get_all_progress
 
+load_dotenv()
+API_KEY = os.getenv("ALPHAQUEUE_API_KEY")
+# Initialize the Flask Blueprint
+# This allows us to organize our routes into separate files
+
 bp = Blueprint('api', __name__)
+
+@bp.before_request
+def check_auth():
+    # Check if the request is for the API and requires authentication
+    if request.path.startswith("/api"):
+        token = request.args.get("token")
+        if token != API_KEY:
+            return jsonify({"error": "Unauthorized"}), 401
+
+@bp.route('/')
+def index():
+    return jsonify({
+        "message": "Welcome to the AlphaQueue API!",
+        "routes": [
+            "/api/progress",
+            "/api/search?query=...",
+            "/api/episodes/<show_id>"
+        ]
+    })
 
 @bp.route('/search')
 def search():
