@@ -55,3 +55,13 @@ def get_all_progress():
                 }
                 for row in rows
             ]
+
+def insert_episode(show_id, show_name, season, episode, title, air_date):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO episodes (show_id, show_name, season, episode, title, air_date)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (show_id, season, episode) DO NOTHING
+            """, (show_id, show_name, season, episode, title, air_date))
+            conn.commit()

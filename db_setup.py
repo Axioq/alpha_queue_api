@@ -2,7 +2,6 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 
-
 load_dotenv()  # Loads from .env into environment variables
 
 DB_NAME = os.getenv("PG_DB")
@@ -28,14 +27,28 @@ CREATE TABLE IF NOT EXISTS watch_history (
     show_id INTEGER NOT NULL,
     season INTEGER NOT NULL,
     episode INTEGER NOT NULL,
-    watched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    watched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    UNIQUE (show_id, season, episode)
+);
+"""
+create_episodes_table = """
+CREATE TABLE IF NOT EXISTS episodes (
+    id SERIAL PRIMARY KEY,
+    show_id INTEGER NOT NULL,
+    show_name TEXT NOT NULL,
+    season INTEGER NOT NULL,
+    episode INTEGER NOT NULL,
+    title TEXT,
+    air_date DATE,
+    UNIQUE (show_id, season, episode)
 );
 """
 
 cur.execute(create_table_sql)
+cur.execute(create_episodes_table)
 conn.commit()
 
-print("✅ Table 'watch_history' created or already exists.")
+print("✅ Tables have been created or already exist.")
 
 cur.close()
 conn.close()
